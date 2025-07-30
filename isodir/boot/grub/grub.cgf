@@ -1,0 +1,3 @@
+menuentry "myos" {
+	multiboot $HOME/isodir/boot/myos.bin
+}
