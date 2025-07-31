@@ -61,7 +61,7 @@ void terminal_initialize(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
+	terminal_color = vga_entry_color(VGA_COLOR_GREEN, VGA_COLOR_DARK_GREY);
 
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -119,6 +119,9 @@ void terminal_writestring(const char* data)
 {
 	terminal_write(data, strlen(data));
 }
+
+// if i change to c++
+// extern "C" {
 
 void kernel_main(void)
 {
