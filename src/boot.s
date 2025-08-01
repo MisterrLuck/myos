@@ -5,6 +5,8 @@
 .set MAGIC,		0x1BADB002			/* 'magic number' lets bootloader find the header */
 .set CHECKSUM,	-(MAGIC + FLAGS)	/* checksum of above, to prove we are multiboot */
 
+
+
 /*
 Declare a multiboot header that marks the program as a kernel. These are magic
 values that are documented in the multiboot standard. The bootloader will
@@ -42,7 +44,6 @@ The linker script specifies _start as the entry point to the kernel and the
 bootloader will jump to this position once the kernel has been loaded. It
 doesn't make sense to return from this function as the bootloader is gone.
 */
-
 .section .text
 .global _start
 .type _start, @function

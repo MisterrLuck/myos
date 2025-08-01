@@ -1,29 +1,40 @@
-SRCDIRS := src
-TMPDIRS := tmp
-BINDIRS := bin
+SRCDIR := src
+TMPDIR := tmp
+BINDIR := bin
+ISODIR := iso
+
+OSNAME := myos
 
 COMPILER := cross/bin/i686-elf
 
-myos.iso: myos.bin
-	grub-mkrescue -o $(BINDIRS)/myos.iso isodir -d /usr/lib/grub/i386-pc
+grub-bootloader: linker
+	@grub-mkrescue -o $(BINDIR)/$(OSNAME).iso $(ISODIR)
 
-myos.bin: kernel.o boot.o
-	$(COMPILER)-gcc -T $(SRCDIRS)/linker.ld -o $(BINDIRS)/myos.bin -ffreestanding -O2 -nostdlib $(TMPDIRS)/boot.o $(TMPDIRS)/kernel.o -lgcc
+linker: kernel boot
+	@$(COMPILER)-gcc -T $(SRCDIR)/linker.ld -o $(BINDIR)/$(OSNAME).bin -ffreestanding -O2 -nostdlib $(TMPDIR)/boot.o $(TMPDIR)/kernel.o -lgcc
+	@cp $(BINDIR)/$(OSNAME).bin $(ISODIR)/boot/$(OSNAME).bin
+	@grub-file --is-x86-multiboot $(BINDIR)/$(OSNAME).bin
 
-boot.o:
-	$(COMPILER)-as $(SRCDIRS)/boot.s -o $(TMPDIRS)/boot.o
+boot:
+	@$(COMPILER)-as $(SRCDIR)/boot.s -o $(TMPDIR)/boot.o
 
-kernel.o:
-	$(COMPILER)-gcc -c $(SRCDIRS)/kernel.c -o $(TMPDIRS)/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+kernel:
+	@$(COMPILER)-gcc -c $(SRCDIR)/kernel.c -o $(TMPDIR)/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+# if you want C++ instead; uncomment this
+# i686-elf-g++ -c kernel.cpp -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
 
-.PHONY: clean q qw
+.PHONY: clean q qw fullclean
 
 qw:
-	qemu-system-i386 -kernel $(BINDIRS)/myos.bin
+	qemu-system-i386 -kernel $(ISODIR)/boot/$(OSNAME).bin
 
 q:
-	qemu-system-i386 -cdrom $(BINDIRS)/myos.iso
+	qemu-system-i386 -cdrom $(BINDIR)/$(OSNAME).iso
 
 clean:
-	rm -rf $(TMPDIRS)/*
+	rm -rf $(TMPDIR)/*
+
+fullclean:
+	rm -rf $(TMPDIR)/*
+	rm -rf $(BINDIR)/*
