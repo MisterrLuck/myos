@@ -3,5 +3,13 @@
 
 void kernel_main(void) {
     terminal_initialize();
-    printf("Hello, kernel World!\n");
+    puts("Hello, kernel World!");
+    for (int i = 0; i < 20; i++) {
+        puts("e");
+    }
+    puts("The Bottom");
+    puts("The Bottom");
+    puts("The Bottom");
+    puts("The Bottom");
+    terminal_scroll(3);
 }

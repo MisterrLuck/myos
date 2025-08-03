@@ -39,39 +39,42 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 }
 
 void terminal_scroll(int line) {
-	int loop;
-	char c;
-
-	for (loop = line * (VGA_WIDTH * 2) + 0xB8000; loop < VGA_WIDTH * 2; loop++) {
-		c = *((char*) loop);
-		*((char*) loop - (VGA_WIDTH * 2)) = c;
+	// TODO: dont get rid of the prev lines and add memory to the scroll
+	for (size_t index = (line * VGA_WIDTH); index < VGA_HEIGHT * VGA_WIDTH; index++) {
+		terminal_buffer[index - (line * VGA_WIDTH)] = terminal_buffer[index];
+		terminal_buffer[index] = vga_entry(' ', terminal_color);
 	}
 }
 
-void terminal_delete_last_line() {
-	int x, *ptr;
+// void terminal_delete_last_line() {
+// 	int x, *ptr;
 
-	for(x = 0; x < VGA_WIDTH * 2; x++) {
-		ptr = (int*) (0xB8000 + (VGA_WIDTH * 2) * (VGA_HEIGHT - 1) + x);
-		*ptr = 0;
+// 	for(x = 0; x < VGA_WIDTH * 2; x++) {
+// 		ptr = (int*) (0xB8000 + (VGA_WIDTH * 2) * (VGA_HEIGHT - 1) + x);
+// 		*ptr = 0;
+// 	}
+// }
+
+void terminal_newline() {
+	terminal_column = 0;
+
+	if (++terminal_row == VGA_HEIGHT)
+	{
+		terminal_scroll(1);
+		// terminal_delete_last_line();
+		// terminal_row = VGA_HEIGHT - 1;
 	}
 }
 
 void terminal_putchar(char c) {
-	int line;
 	unsigned char uc = c;
 
-	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-		{
-			for(line = 1; line <= VGA_HEIGHT - 1; line++)
-			{
-				terminal_scroll(line);
-			}
-			terminal_delete_last_line();
-			terminal_row = VGA_HEIGHT - 1;
+	if (uc == '\n') {
+		terminal_newline();
+	} else {	
+		terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
+		if (++terminal_column == VGA_WIDTH) {
+			terminal_newline();
 		}
 	}
 }
