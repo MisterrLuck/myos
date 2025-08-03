@@ -3,7 +3,7 @@ TMPDIR := tmp
 BINDIR := bin
 ISODIR := iso
 
-OSNAME := myos
+OSNAME := os
 
 COMPILER := cross/bin/i686-elf
 
