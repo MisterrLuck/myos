@@ -46,32 +46,27 @@ void terminal_scroll(int line) {
 	}
 }
 
-// void terminal_delete_last_line() {
-// 	int x, *ptr;
-
-// 	for(x = 0; x < VGA_WIDTH * 2; x++) {
-// 		ptr = (int*) (0xB8000 + (VGA_WIDTH * 2) * (VGA_HEIGHT - 1) + x);
-// 		*ptr = 0;
-// 	}
-// }
-
 void terminal_newline() {
 	terminal_column = 0;
 
 	if (++terminal_row == VGA_HEIGHT)
 	{
 		terminal_scroll(1);
-		// terminal_delete_last_line();
-		// terminal_row = VGA_HEIGHT - 1;
 	}
 }
 
 void terminal_putchar(char c) {
 	unsigned char uc = c;
 
-	if (uc == '\n') {
+	if (uc == '\n') {	// newline
 		terminal_newline();
-	} else {	
+	} else if (uc == '\b') {	// backspace
+		if (--terminal_column > VGA_WIDTH) {	// Unsigned int below 0 wraps around to large number
+			terminal_column = VGA_WIDTH-1;
+			if (terminal_row != 0) terminal_row--;	// At the beginning?? then don't move
+		}
+		terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+	} else {	// normal character
 		terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 		if (++terminal_column == VGA_WIDTH) {
 			terminal_newline();

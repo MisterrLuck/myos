@@ -7,9 +7,9 @@ void kernel_main(void) {
     for (int i = 0; i < 20; i++) {
         puts("e");
     }
-    puts("The Bottom");
-    puts("The Bottom");
-    puts("The Bottom");
-    puts("The Bottom");
+    printf("The Bottom\n");
+    printf("The Bottom\n");
+    printf("\bc");
+    printf("The Bottom\n");
     terminal_scroll(3);
 }

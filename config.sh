@@ -4,7 +4,7 @@ PROJECTS="libc kernel"
 export MAKE=${MAKE:-make}
 export HOST=${HOST:-$(./default-host.sh)}
 
-export PATH="/usr/local/cross/bin:$PATH"
+# export PATH="/usr/local/cross/bin:$PATH"
 
 export AR=${HOST}-ar
 export AS=${HOST}-as

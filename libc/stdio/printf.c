@@ -61,6 +61,7 @@ int printf(const char* restrict format, ...) {
 			if (!print(str, len))
 				return -1;
 			written += len;
+			// TODO add int printing: https://wiki.osdev.org/Printing_To_Screen
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);
